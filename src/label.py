@@ -1,8 +1,6 @@
 import sublime
 import sublime_plugin
 
-# 1remeee
-
 class Label:
     view = None
     region = None
@@ -10,5 +8,14 @@ class Label:
     def __init__(self, view, region):
         self.view = view
         self.region = region
-        print(self.view)
-        print(view.substr(self.region))
+        self.key = self.__get_key()
+
+    def __get_key(self):
+      return "%u %u" % (self.region.a, self.region.b)
+
+    def enable(self):
+        print('draw')
+        self.view.add_regions(self.key, [self.region], 'string', "", sublime.DRAW_SOLID_UNDERLINE)
+
+    def disable(self):
+        print('disable')

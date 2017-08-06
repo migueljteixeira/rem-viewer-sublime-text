@@ -6,7 +6,6 @@ from .label import Label
 class Viewer:
     REGEX = '([0-9]*[\.]*[0-9]+)rem(?=[;|\s])'
 
-    enabled = False
     labels = None
     view = None
 
@@ -23,7 +22,9 @@ class Viewer:
         )
 
     def enable(self):
-        self.enabled = True
+        for label in self.labels:
+            label.enable()
 
     def disable(self):
-        self.enabled = False
+        for label in self.labels:
+            label.disable()
