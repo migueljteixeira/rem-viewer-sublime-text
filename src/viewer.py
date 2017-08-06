@@ -1,18 +1,29 @@
 import sublime
 import sublime_plugin
 
-from .finder import Finder
+from .label import Label
 
 class Viewer:
+    REGEX = '([0-9]*[\.]*[0-9]+)rem(?=[;|\s])'
+
+    enabled = False
+    labels = None
     view = None
-    colors = None
 
     def __init__(self, view):
         self.view = view
-        self.colors = None
+        self.labels = self.__get_labels()
+
+    def __get_labels(self):
+        # Within this view, We look for all regions that match the given regex
+        regions = self.view.find_all(self.REGEX)
+
+        return list(map(lambda region:
+          Label(self.view, region), regions)
+        )
 
     def enable(self):
-        if self.view.window().active_view().id() == self.view.id():
-            print('TODO: only look at active views')
+        self.enabled = True
 
-        self.colors = Finder(self.view)
+    def disable(self):
+        self.enabled = False
