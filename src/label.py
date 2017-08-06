@@ -8,14 +8,9 @@ class Label:
     def __init__(self, view, region):
         self.view = view
         self.region = region
-        self.key = self.__get_key()
-
-    def __get_key(self):
-      return "%u %u" % (self.region.a, self.region.b)
 
     def enable(self):
-        print('draw')
-        self.view.add_regions(self.key, [self.region], 'string', "", sublime.DRAW_SOLID_UNDERLINE)
+        return sublime.Phantom(self.region, '<body id="my-plugin-feature"><style>div.error {background-color: red;padding: 5px;}</style><div class="error">AAAA</div></body>', sublime.LAYOUT_INLINE)
 
     def disable(self):
         print('disable')
