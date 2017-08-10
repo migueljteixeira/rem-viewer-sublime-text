@@ -9,8 +9,12 @@ class Label:
         self.view = view
         self.region = region
 
-    def enable(self):
-        return sublime.Phantom(self.region, '<body id="my-plugin-feature"><style>div.error {background-color: red;padding: 5px;}</style><div class="error">AAAA</div></body>', sublime.LAYOUT_INLINE)
+    def get_row(self):
+        (row, col) = self.view.rowcol(self.region.a)
+        return row
+
+    def get_value(self):
+        return self.view.substr(self.region).split("rem")[0]
 
     def disable(self):
         print('disable')
