@@ -7,15 +7,15 @@ class Viewer:
     REGEX = '([0-9]*[\.]*[0-9]+)rem(?=[;|\s])'
 
     view = None
-    phantoms = None
-    labels = None
+    enabled = False
+    phantom_set = []
 
     def __init__(self, view):
         self.view = view
-        self.phantoms = self.__get_phantoms()
-        self.labels = self.__get_labels()
+        self.phantom_set = self.__get_phantom_set()
+        self.draw()
 
-    def __get_phantoms(self):
+    def __get_phantom_set(self):
         # Create a unique PhantomSet per view
         return sublime.PhantomSet(self.view, str(self.view.id()))
 
@@ -56,10 +56,12 @@ class Viewer:
 
         return sublime.Region(line.end())
 
-    def enable(self):
+    def draw(self):
+        labels_per_row = self.__get_labels()
+        
         phantoms = []
 
-        for row, labels in self.labels.items():
+        for row, labels in labels_per_row.items():
 
             values = []
             for label in labels:
@@ -69,7 +71,21 @@ class Viewer:
                 sublime.Phantom(self.__get_row_region(row), self.__get_html(values), sublime.LAYOUT_INLINE)
             )
 
-        self.phantoms.update(phantoms)
+        self.phantom_set.update(phantoms)
+
+    def enable(self):
+        print('enable')
+        # if not self.enabled:
+        #     self.enabled = True
+        #     self.draw();
 
     def disable(self):
         print('disable')
+        # self.enabled = False
+
+    def modify(self):
+        print('modify')
+        word = self.view.word(self.view.sel()[0])
+        regex = self.view.find(self.REGEX, word.begin())
+
+        print(self.view.substr(regex))

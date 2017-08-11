@@ -15,6 +15,3 @@ class Label:
 
     def get_value(self):
         return self.view.substr(self.region).split("rem")[0]
-
-    def disable(self):
-        print('disable')
