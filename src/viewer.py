@@ -7,7 +7,6 @@ class Viewer:
     REGEX = '([0-9]*[\.]*[0-9]+)rem(?=[;|\s])'
 
     view = None
-    enabled = False
     phantom_set = []
 
     def __init__(self, view):
@@ -19,11 +18,7 @@ class Viewer:
         # Create a unique PhantomSet per view
         return sublime.PhantomSet(self.view, str(self.view.id()))
 
-    def __get_labels(self):
-        # Within this view, we look for all regions that match the given regex
-        # and create a Label per region
-        regions = self.view.find_all(self.REGEX)
-
+    def __get_labels(self, regions):
         labels = {}
         for region in regions:
             label = Label(self.view, region)
@@ -57,12 +52,17 @@ class Viewer:
         return sublime.Region(line.end())
 
     def draw(self):
-        labels_per_row = self.__get_labels()
-        
+        # Within this view, we look for all regions that match the given regex
+        regions = self.view.find_all(self.REGEX)
+        labels = self.__get_labels(regions)
+        phantoms = self.get_phantoms(labels)
+
+        self.phantom_set.update(phantoms)
+
+    def get_phantoms(self, labels_per_row):
         phantoms = []
 
         for row, labels in labels_per_row.items():
-
             values = []
             for label in labels:
                 values.append(label.get_value())
@@ -71,21 +71,34 @@ class Viewer:
                 sublime.Phantom(self.__get_row_region(row), self.__get_html(values), sublime.LAYOUT_INLINE)
             )
 
-        self.phantom_set.update(phantoms)
+        return phantoms
 
     def enable(self):
         print('enable')
-        # if not self.enabled:
-        #     self.enabled = True
-        #     self.draw();
 
     def disable(self):
         print('disable')
-        # self.enabled = False
 
     def modify(self):
         print('modify')
-        word = self.view.word(self.view.sel()[0])
-        regex = self.view.find(self.REGEX, word.begin())
+        print(self.view.line(self.view.sel()[0]))
 
-        print(self.view.substr(regex))
+        regions = self.view.find_all(self.REGEX)
+        for region in regions:
+            # .....
+            print(self.view.substr(region))
+
+        # labels = self.__get_labels(regions)
+        # phantoms = self.get_phantoms(labels)
+
+        # self.phantom_set.update(phantoms)
+
+        # Within this view, we look for the first region that
+        # begins at the current word's region
+        # and matches the given regex
+        # current_word = self.view.word(self.view.sel()[0])
+        # region = self.view.find(self.REGEX, current_word.begin())
+        # labels = self.__get_labels([region])
+        # phantoms = self.get_phantoms(labels)
+
+        # self.phantom_set.update(phantoms)
