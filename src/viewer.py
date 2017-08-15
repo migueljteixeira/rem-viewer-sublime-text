@@ -1,3 +1,4 @@
+import re
 import sublime
 import sublime_plugin
 
@@ -81,24 +82,16 @@ class Viewer:
 
     def modify(self):
         print('modify')
-        print(self.view.line(self.view.sel()[0]))
+        line = self.view.line(self.view.sel()[0])
+        content = self.view.substr(line)
 
-        regions = self.view.find_all(self.REGEX)
-        for region in regions:
-            # .....
-            print(self.view.substr(region))
+        print(content)
+        # print(re.findall(r"([0-9]*[\.]*[0-9]+)rem(?=[;|\s])", content))
 
-        # labels = self.__get_labels(regions)
-        # phantoms = self.get_phantoms(labels)
+        all_content = self.view.substr(sublime.Region(0, self.view.size()))
 
-        # self.phantom_set.update(phantoms)
-
-        # Within this view, we look for the first region that
-        # begins at the current word's region
-        # and matches the given regex
-        # current_word = self.view.word(self.view.sel()[0])
-        # region = self.view.find(self.REGEX, current_word.begin())
-        # labels = self.__get_labels([region])
-        # phantoms = self.get_phantoms(labels)
-
-        # self.phantom_set.update(phantoms)
+        regex = re.compile(r"([0-9]*[\.]*[0-9]+)rem(?=[;|\s])")
+        for match in re.finditer(regex, all_content):
+            (row, col) = self.view.rowcol(match.start())
+            print(row)
+            # print(all_content[match.start() : match.end()])
