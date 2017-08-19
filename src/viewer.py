@@ -51,7 +51,6 @@ class Viewer:
 
     def __get_labels(self, content, offset = 0):
         labels = {}
-        found = False
 
         for region in re.finditer(self.regex, content):
             label = Label(self.view, region, offset)
@@ -61,13 +60,6 @@ class Viewer:
                 labels[row] = [label]
             else:
                 labels[row].append(label)
-
-            found = True
-
-        if not found:
-            print('NOTHING!')
-            (row, col) = self.view.rowcol(offset)
-            labels[row] = []
 
         return labels
 
@@ -94,5 +86,10 @@ class Viewer:
             line = self.view.line(selection)
             content = self.view.substr(line)
             offset = line.a
+
+            # (row, col) = self.view.rowcol(line.begin())
+            # (row2, col2) = self.view.rowcol(line.end())
+            # print(content)
+            # print(row, row2)
 
             self.__draw(content, offset)

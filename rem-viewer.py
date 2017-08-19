@@ -62,6 +62,10 @@ class Listener(sublime_plugin.EventListener):
         if rem_viewer is not None:
             rem_viewer.modify_view(view)
 
+    def on_selection_modified(self, view):
+        print('on_selection_modified')
+        print(view.sel()[0].a, view.sel()[0].b)
+
     def on_activated(self, view):
         print('on_activated')
         if rem_viewer is not None:
@@ -71,6 +75,10 @@ class Listener(sublime_plugin.EventListener):
         print('on_deactivated')
         if rem_viewer is not None:
             rem_viewer.disable_view(view)
+
+    def on_text_command(self, view, command_name, args):
+        print('on_text_command')
+        print(command_name, args)
 
 # Called when the Sublime's API is ready
 def plugin_loaded():
