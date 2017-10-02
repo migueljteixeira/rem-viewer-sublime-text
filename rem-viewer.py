@@ -2,6 +2,7 @@ __version__ = "1.0.0"
 __authors__ = ['"Miguel Teixeira" <mteixeira5@gmail.com>']
 
 from .src.viewer import Viewer
+from .src.settings import Settings
 
 import sublime
 import sublime_plugin
@@ -10,8 +11,11 @@ rem_viewer = None
 
 class RemViewer:
     views = {}
+    settings = {}
 
     def __init__(self):
+        self.settings = Settings()
+
         for window in sublime.windows():
             for view in window.views():
                 self.add_view(view)
@@ -36,6 +40,10 @@ class RemViewer:
     def modify_view(self, view):
         if view.id() in self.views:
             self.views[view.id()].modify()
+
+    def modify_selection_view(self, view):
+        if view.id() in self.views:
+            self.views[view.id()].modify_selection()
 
 class Listener(sublime_plugin.EventListener):
     def on_new(self, view):
@@ -65,7 +73,8 @@ class Listener(sublime_plugin.EventListener):
 
     def on_selection_modified(self, view):
         print('on_selection_modified')
-        # print(view.sel()[0].a, view.sel()[0].b)
+        if rem_viewer is not None:
+            rem_viewer.modify_selection_view(view)
 
     def on_activated(self, view):
         print('on_activated')
@@ -76,10 +85,6 @@ class Listener(sublime_plugin.EventListener):
         print('on_deactivated')
         if rem_viewer is not None:
             rem_viewer.disable_view(view)
-
-    def on_text_command(self, view, command_name, args):
-        print('on_text_command')
-        # print(command_name, args)
 
 # Called when the Sublime's API is ready
 def plugin_loaded():

@@ -1,0 +1,9 @@
+{
+    "file_extensions": [
+        ".css",
+        ".less",
+        ".scss",
+        ".sass",
+        ".styl"
+    ]
+}

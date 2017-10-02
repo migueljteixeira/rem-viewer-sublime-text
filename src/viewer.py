@@ -59,6 +59,12 @@ class Viewer:
             else:
                 labels[row].append(label)
 
+        # If we don't found any matches
+        # the offset's row has no labels
+        if not labels:
+            (row, col) = self.view.rowcol(offset)
+            labels[row] = []
+
         return labels
 
     def __draw(self, content, offset = 0):
@@ -79,7 +85,7 @@ class Viewer:
     def disable(self):
         print('disable')
         for row, phantom in self.phantoms.items():
-          self.view.erase_regions(str(row))
+            self.view.erase_regions(str(row))
 
         self.phantoms = {}
 
@@ -90,10 +96,15 @@ class Viewer:
             line = self.view.line(selection)
             content = self.view.substr(line)
             offset = line.a
-
-            # (row, col) = self.view.rowcol(line.begin())
-            # (row2, col2) = self.view.rowcol(line.end())
-            # print(content)
-            # print(row, row2)
             
             self.__draw(content, offset)
+
+    def modify_selection(self):
+        selection = self.view.sel()
+
+        # Check if we only have one selection
+        # and if that selection's region is empty
+        if (len(selection) == 1) and (selection[0].a == selection[0].b):
+            print("YES!")
+        else:
+            print("NO!")
