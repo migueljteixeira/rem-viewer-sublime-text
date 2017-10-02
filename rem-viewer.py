@@ -26,6 +26,7 @@ class RemViewer:
 
     def enable_view(self, view):
         if view.id() in self.views:
+            self.views[view.id()].disable()
             self.views[view.id()].enable()
 
     def disable_view(self, view):
@@ -64,7 +65,7 @@ class Listener(sublime_plugin.EventListener):
 
     def on_selection_modified(self, view):
         print('on_selection_modified')
-        print(view.sel()[0].a, view.sel()[0].b)
+        # print(view.sel()[0].a, view.sel()[0].b)
 
     def on_activated(self, view):
         print('on_activated')
@@ -78,7 +79,7 @@ class Listener(sublime_plugin.EventListener):
 
     def on_text_command(self, view, command_name, args):
         print('on_text_command')
-        print(command_name, args)
+        # print(command_name, args)
 
 # Called when the Sublime's API is ready
 def plugin_loaded():

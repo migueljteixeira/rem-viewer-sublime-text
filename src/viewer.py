@@ -9,7 +9,7 @@ class Viewer:
 
     view = None
     regex = None
-    regions = []
+    phantoms = {}
     phantom_set = {}
 
     def __init__(self, view):
@@ -38,19 +38,14 @@ class Viewer:
         return sublime.Region(line.end())
 
     def __get_phantoms(self, labels_per_row):
-        phantoms = {}
+        phantoms = self.phantoms
 
         for row, labels in labels_per_row.items():
-            values = []
-            for label in labels:
-                values.append(label.get_value())
-
-            # Save region id
-            self.regions.append(str(row))
+            values = [label.get_value() for label in labels]
 
             phantoms[row] = sublime.Phantom(self.__get_row_region(row), self.__get_html(values), sublime.LAYOUT_INLINE)
 
-        return list(phantoms.values())
+        return phantoms
 
     def __get_labels(self, content, offset = 0):
         labels = {}
@@ -70,7 +65,9 @@ class Viewer:
         labels = self.__get_labels(content, offset)
         phantoms = self.__get_phantoms(labels)
 
-        self.phantom_set.update(phantoms)
+        # Update phantoms and phantomsSet 
+        self.phantoms = phantoms
+        self.phantom_set.update(list(phantoms.values()))
 
     def enable(self):
         print('enable')
@@ -81,10 +78,10 @@ class Viewer:
 
     def disable(self):
         print('disable')
-        for region in self.regions:
-          self.view.erase_regions(region)
+        for row, phantom in self.phantoms.items():
+          self.view.erase_regions(str(row))
 
-        self.regions = []
+        self.phantoms = {}
 
     def modify(self):
         print('modify')
@@ -98,5 +95,5 @@ class Viewer:
             # (row2, col2) = self.view.rowcol(line.end())
             # print(content)
             # print(row, row2)
-
+            
             self.__draw(content, offset)
